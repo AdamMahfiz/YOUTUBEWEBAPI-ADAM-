@@ -1,0 +1,124 @@
+﻿@model List<YouTubeApiProject.Models.YouTubeVideoModel>
+
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+<h1 class="text-center">Search Results</h1>
+
+<!-- Search Bar -->
+<div class="search-container mb-4">
+    <!-- Added margin-bottom -->
+    <form asp-action="Search" method="post" class="search-form">
+        <div class="input-group">
+            <input type="text" name="query" class="form-control search-input" placeholder="Search videos..." required />
+
+            <select name="dateFilter" class="custom-select search-dropdown">
+                <option value="7">Last 7 Days</option>
+                <option value="30" selected>Last 30 Days</option>
+                <option value="90">Last 90 Days</option>
+                <option value="all">All Time</option>
+            </select>
+
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-warning search-btn">🔍 Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="container">
+        <div class="row">
+            @foreach (var video in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="video-card">
+                        <img src="@video.ThumbnailUrl" alt="@video.Title" class="thumbnail" />
+                        <h3>@video.Title</h3>
+                        <p><strong>Channel:</strong> @video.ChannelTitle</p>
+                        <p><small class="text-muted">Published on @video.PublishedAtFormatted</small></p>
+                        <a href="@video.VideoUrl" target="_blank" class="btn btn-light btn-lg">▶ Watch</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    @if (ViewBag.TotalPages > 1)
+    {
+        <nav class="pagination-container text-center mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Search", new { query = ViewBag.SearchQuery, dateFilter = ViewBag.SelectedDateFilter, page = ViewBag.CurrentPage - 1 })">❮ Prev</a>
+                </li>
+
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Search", new { query = ViewBag.SearchQuery, dateFilter = ViewBag.SelectedDateFilter, page = i })">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Search", new { query = ViewBag.SearchQuery, dateFilter = ViewBag.SelectedDateFilter, page = ViewBag.CurrentPage + 1 })">Next ❯</a>
+                </li>
+            </ul>
+        </nav>
+    }
+}
+else
+{
+    <p class="text-center text-muted">No videos found. Try another search.</p>
+}
+
+<style>
+    .search-container {
+        margin-bottom: 30px; /* Additional spacing */
+    }
+
+    .video-card {
+        background: #222;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease-in-out;
+    }
+
+        .video-card:hover {
+            transform: scale(1.05);
+        }
+
+    .thumbnail {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    .pagination-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .pagination .page-item .page-link {
+        background-color: #222;
+        color: #ffc107;
+        border-radius: 5px;
+        margin: 5px;
+        border: 1px solid #ffc107;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #ffc107;
+        color: #222;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        background-color: #333;
+        color: #777;
+        pointer-events: none;
+    }
+</style>

@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Search YouTube Videos";
+}
+
+<h1 class="text-center">Search YouTube Videos</h1>
+
+<!-- Search Bar -->
+<div class="search-container">
+    <form asp-action="Search" method="post" class="search-form">
+        <div class="input-group">
+            <input type="text" name="query" class="form-control search-input" placeholder="Search videos..." required />
+
+            <select name="dateFilter" class="custom-select search-dropdown">
+                <option value="7">Last 7 Days</option>
+                <option value="30" selected>Last 30 Days</option>
+                <option value="90">Last 90 Days</option>
+                <option value="all">All Time</option>
+            </select>
+
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-warning search-btn">🔍 Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    .search-container {
+        margin-bottom: 30px;
+    }
+</style>
